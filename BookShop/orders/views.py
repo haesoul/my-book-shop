@@ -24,7 +24,7 @@ class AddOrderView(LoginRequiredMixin,CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-
+        CartItem.objects.all().delete()
         return reverse_lazy('home')
 
 
