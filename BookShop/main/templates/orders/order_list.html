@@ -1,0 +1,23 @@
+{% extends 'base/base.html' %}
+{% block title %}{% endblock %}
+
+
+
+{% block content %}
+<h2>Мои заказы</h2>
+{% for order in orders %}
+    <div class="order-card">
+        <p>Заказ №{{ order.id }} от {{ order.created_at }}</p>
+        <p>Статус: {{ order.status }}</p>
+        <a href="{% url 'order:order_detail' order.id %}">Посмотреть детали</a>
+
+    </div>
+{% empty %}
+    <p>У вас пока нет заказов.</p>
+{% endfor %}
+
+{% endblock %}
+
+
+
+

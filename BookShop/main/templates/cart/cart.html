@@ -1,0 +1,49 @@
+{% extends 'base/base.html' %}
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+<h1 class="maybe-you-need">Ваша корзина</h1>
+
+{% if cart %}
+  <div class="products-grid">
+    {% for product in cart %}
+      <div class="product-block-home">
+        <a class="product-link" href="{% url 'product' product.product.slug %}">
+          <div class="product-name-in-list">{{ product.product.name }}</div>
+          <div class="product-description-in-list">{{ product.product.description|truncatechars:50 }}</div>
+          {% if product.product.photo %}
+            <img class="products-middle-size-photo-in-list" src="{{ product.product.photo.url }}" alt="">
+          {% endif %}
+        </a>
+        <div class="product-price-in-list">
+          Цена: <span class="product-price-value">${{ product.product.price }}</span>
+        </div>
+        <div class="product-stock-in-list">
+          В наличии: <span class="product-price-value-in-list">{{ product.product.stock }}</span>
+        </div>
+        {% if product.quantity > 1 %}
+          <div class="product-stock-in-list">
+            В корзине: <span class="product-price-value-in-list">{{ product.quantity }}</span>
+          </div>
+        {% endif %}
+
+        <!-- Кнопка "Удалить" -->
+        <form method="post" action="" style="margin-top: 10px;">
+          {% csrf_token %}
+          <input type="hidden" name="delete_item_id" value="{{ product.id }}">
+          <button type="submit">Удалить</button>
+        </form>
+
+          <div class="do-order-link"><a href="{% url 'order:create_order' product.product.slug %}">ЗАКАЗАТЬ</a></div>
+      </div>
+    {% endfor %}
+
+  </div>
+
+
+
+
+{% else %}
+  <h2 class="maybe-you-need">Корзина пуста</h2>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+{% block content %}
+    <h1><div class="genre-category-name-block">Категория</div>{{ category.name }}</h1>
+    <div class="products-grid">
+        {% for product in category.category_products.all %}
+            <a class="product-link" href="{% url 'product' product.slug %}">
+                <div class="product-block-home">
+                    <div class="product-name-in-list">{{ product.name }}</div>
+                    <div class="product-description-in-list">{{ product.description|truncatechars:50 }}</div>
+                    {% if product.photo %}<img class="products-middle-size-photo-in-list" src="{{ product.photo.url }}" alt="" width="300px" height="400px">{% endif %}
+                    <div class="product-price-in-list">Цена<div class="product-price-value">${{ product.price }}</div></div>
+                    <div class="product-stock-in-list">Количество Товаров<div class="product-price-value-in-list">{{ product.stock }}</div></div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

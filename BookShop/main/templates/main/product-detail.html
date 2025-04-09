@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<div class="product-detail-block">
+    <img src="{{ product.photo.url }}" alt="">
+    <div class="product-detail-name">{{ product.name }}</div>
+    <div class="Overall-block-for-genres-and-cats">
+        <h3 class="cat-block">Категория</h3>
+        <div class="category-genre-links-block"><a class="link-block-for-genre" href="{% url 'category' product.category.slug %}">{{ product.category.name }}</a></div>
+        <h3 class="cat-block">Жанры</h3>
+        {% for genre in product.genre.all %}
+        <div class="category-genre-links-block"><a class="link-block-for-genre" href="{% url 'genre' genre.slug %}">{{ genre.name }}</a></div>
+        {% endfor %}
+    </div>
+
+    <div class="product-detail-description">{{ product.description }}</div>
+    <div class="product-detail-price-in-list">Цена<div class="product-price-value">${{ product.price }}</div></div>
+    <div class="product-detail-stock-in-list">Количество Товаров<div class="product-price-value-in-list">{{ product.stock }}</div></div>
+<div class="product-detail-form-block">
+    <form action="" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Добавить в корзину</button>
+    </form>
+</div>
+</div>
+{% endblock %}
+

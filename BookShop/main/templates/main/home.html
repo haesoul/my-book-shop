@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Главная Страница
+{% endblock %}
+
+{% block content %}
+    <div class="products-grid">
+            {% for product in products %}
+                      <a class="product-link" href="{% url 'product' product.slug %}">
+                            <div class="product-block-home">
+                              <div class="product-name-in-list">{{ product.name }}</div>
+                              <div class="product-description-in-list">{{ product.description|truncatechars:50 }}</div>
+                              {% if product.photo %}
+                                <img class="products-middle-size-photo-in-list" src="{{ product.photo.url }}" alt="">
+                              {% endif %}
+                              <div class="product-price-in-list">
+                                Цена: <span class="product-price-value">${{ product.price }}</span>
+                              </div>
+                              <div class="product-stock-in-list">
+                                В наличии: <span class="product-price-value-in-list">{{ product.stock }}</span>
+                              </div>
+                        </div>
+                      </a>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+
+
+
+
+

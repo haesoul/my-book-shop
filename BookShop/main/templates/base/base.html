@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+
+<body>
+<div class="categories-and-genre-links">
+        <div class="categories-links-block">
+            <div class="categories-on-down">Категории</div>
+            <ul>
+                {% for category in categories %}
+                    <li class="category-link"><a href="{% url 'category' category.slug %}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+
+            <div class="categories-on-down">Жанры</div>
+            <ul>
+                {% for category in genres %}
+                    <li class="category-link"><a href="{% url 'genre' category.slug %}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+<header>
+    <nav>
+        <ul class="base-links">
+            <li><a href="{% url 'home' %}">Главная</a></li>
+            <li><a class="cart-link" href="{% url 'cart:cart' %}">Корзина</a></li>
+            <li><a class="cart-link" href="{% url 'order:order-list' %}">Заказы</a></li>
+        </ul>
+    </nav>
+
+
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>
