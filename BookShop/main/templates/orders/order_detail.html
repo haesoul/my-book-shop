@@ -10,9 +10,8 @@
 <p>Дата создания: {{ order.created_at }}</p>
 
 <hr>
-
 <h2>Товары в заказе:</h2>
-{% for item in items %}
+{% for item in order.items.all %}
     <div class="product-block-home">
         <a href="{% url 'product' item.product.slug %}" class="product-link">
             <div class="product-name-in-list">{{ item.product.name }}</div>

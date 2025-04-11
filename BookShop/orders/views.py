@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
@@ -9,7 +10,7 @@ from orders.forms import *
 from orders.models import *
 
 
-class AddOrderView(LoginRequiredMixin,CreateView):
+class AddOrderView(LoginRequiredMixin, CreateView):
     form_class = OrderForm
     model = Order
     template_name = 'orders/add-order.html'
@@ -20,18 +21,31 @@ class AddOrderView(LoginRequiredMixin,CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        form.instance.product = self.get_object()
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        cart = Cart.objects.get(user=self.request.user)
+        product = self.get_object()
+
+        try:
+            cart_item = CartItem.objects.get(cart=cart, product=product)
+        except CartItem.DoesNotExist:
+            messages.error(self.request, "Выбранный товар отсутствует в корзине.")
+            return redirect('home')  # или на 'cart:view', если у тебя есть такой маршрут
+
+        # Создаём OrderItem
+        OrderItem.objects.create(
+            order=self.object,
+            product=product,
+            quantity=cart_item.quantity,
+            price=product.price
+        )
+
+        cart_item.delete()  # удаляем товар из корзины после заказа
+
+        return response
 
     def get_success_url(self):
-        CartItem.objects.all().delete()
         return reverse_lazy('home')
-
-
-
-
-
-
 
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
@@ -39,14 +53,13 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     template_name = 'orders/order_detail.html'
     context_object_name = 'order'
 
+
     def get_queryset(self):
-        # Только заказы текущего пользователя
         return Order.objects.filter(user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Добавим связанные товары в заказе
-        context['items'] = OrderItem.objects.filter(order=self.object)
+        context['items'] = self.object.items.all()  # <-- вот эта строка
         return context
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -54,4 +67,7 @@ class OrderListView(LoginRequiredMixin, ListView):
     template_name = 'orders/order_list.html'
     context_object_name = 'orders'
 
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)
 
